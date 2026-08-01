@@ -1,0 +1,6 @@
+.env
+tracker.db
+.ch_cache_*.json
+__pycache__/
+.venv/
+*.pyc
