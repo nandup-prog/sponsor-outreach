@@ -22,6 +22,15 @@ load_dotenv()
 db.init_db()
 st.set_page_config(page_title="Sponsor Outreach Tracker", page_icon="📇", layout="wide")
 
+# Keys: Streamlit Community Cloud injects them via st.secrets; locally via .env.
+for _k in ("COMPANIES_HOUSE_API_KEY", "ANTHROPIC_API_KEY"):
+    if not os.environ.get(_k):
+        try:
+            if _k in st.secrets:
+                os.environ[_k] = st.secrets[_k]
+        except Exception:
+            pass
+
 HAS_CH = bool(os.environ.get("COMPANIES_HOUSE_API_KEY"))
 HAS_AI = bool(os.environ.get("ANTHROPIC_API_KEY"))
 
@@ -98,15 +107,16 @@ with tab_track:
         st.info("No leads yet. Run a batch from the sidebar.")
     else:
         df = pd.DataFrame(rows)
-        view = df[["id", "linkedin_name", "website", "target_personas", "sector",
-                   "town", "status", "contact_name", "contact_url",
+        view = df[["id", "company", "linkedin_name", "website", "target_personas",
+                   "sector", "town", "status", "contact_name", "contact_url",
                    "linkedin_company_search", "user_notes"]].copy()
         edited = st.data_editor(
             view, key="editor", hide_index=True, use_container_width=True,
-            disabled=["id", "linkedin_name", "website", "target_personas",
+            disabled=["id", "company", "linkedin_name", "website", "target_personas",
                       "sector", "town", "linkedin_company_search"],
             column_config={
                 "id": None,
+                "company": "Register name",
                 "linkedin_name": "Company (search on LinkedIn)",
                 "website": st.column_config.LinkColumn("Website"),
                 "target_personas": st.column_config.TextColumn("Who to reach", width="medium"),
