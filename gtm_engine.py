@@ -102,34 +102,31 @@ TECH_SECTOR_PRIORITY = {
     "IT consultancy": 4, "e-commerce / online retail": 5,
 }
 
-# --- Profile "sister": fashion / retail / media / airlines & travel ---
+# --- Profile "sister": fashion / media / airlines (retail removed) ---
 SISTER_SIC_SECTORS = {
     # fashion & apparel
     "14": "fashion / apparel", "15": "footwear / leather goods", "13": "textiles",
     "7410": "design", "74100": "design",
-    # fashion & general retail + e-commerce + wholesale
     "4771": "clothing retail", "4772": "footwear retail", "4751": "textiles retail",
     "4642": "fashion wholesale", "4641": "textiles wholesale",
-    "4791": "e-commerce", "47": "retail", "46": "wholesale",
     # media / creative / advertising / PR
     "58": "publishing", "59": "film / TV / music", "60": "broadcasting",
     "6391": "news / media", "73": "advertising / media", "7021": "PR / communications",
     "90": "creative / arts",
-    # airlines / aviation / travel / hospitality
+    # airlines / aviation / travel
     "5110": "airlines", "51": "aviation", "5223": "airport services",
-    "79": "travel / tourism", "55": "hospitality",
+    "79": "travel / tourism",
 }
 SISTER_SECTOR_PRIORITY = {
     # tier 1 — core target sectors
     "fashion / apparel": 1, "clothing retail": 1, "footwear retail": 1,
-    "e-commerce": 1, "airlines": 1, "aviation": 1, "film / TV / music": 1,
+    "airlines": 1, "aviation": 1, "film / TV / music": 1,
     "broadcasting": 1, "advertising / media": 1, "PR / communications": 1, "design": 1,
     # tier 2
-    "retail": 2, "publishing": 2, "news / media": 2, "travel / tourism": 2,
+    "publishing": 2, "news / media": 2, "travel / tourism": 2,
     "textiles": 2, "fashion wholesale": 2, "airport services": 2, "creative / arts": 2,
     # tier 3 — adjacent
-    "wholesale": 3, "footwear / leather goods": 3, "textiles retail": 3,
-    "textiles wholesale": 3, "hospitality": 3,
+    "footwear / leather goods": 3, "textiles retail": 3, "textiles wholesale": 3,
 }
 
 

@@ -33,6 +33,18 @@ def _now() -> str:
     return _dt.datetime.now().isoformat(timespec="seconds")
 
 
+# Column -> SQL declaration. Used to CREATE and to auto-migrate older DBs.
+_COLUMNS = {
+    "company": "TEXT", "ch_company_name": "TEXT", "linkedin_name": "TEXT",
+    "website": "TEXT", "target_personas": "TEXT", "sector": "TEXT", "town": "TEXT",
+    "accounts_type": "TEXT", "google_search": "TEXT", "linkedin_company_search": "TEXT",
+    "ch_url": "TEXT", "sic_codes": "TEXT", "connection_note": "TEXT", "followup_dm": "TEXT",
+    "status": "TEXT DEFAULT 'New'", "contact_name": "TEXT DEFAULT ''",
+    "contact_url": "TEXT DEFAULT ''", "user_notes": "TEXT DEFAULT ''",
+    "created_at": "TEXT", "updated_at": "TEXT",
+}
+
+
 def init_db() -> None:
     with _conn() as c:
         c.execute("""
@@ -40,17 +52,14 @@ def init_db() -> None:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 profile TEXT NOT NULL,
                 company_number TEXT NOT NULL,
-                company TEXT, ch_company_name TEXT, linkedin_name TEXT, website TEXT,
-                target_personas TEXT, sector TEXT, town TEXT, accounts_type TEXT,
-                google_search TEXT, linkedin_company_search TEXT, ch_url TEXT,
-                sic_codes TEXT, connection_note TEXT, followup_dm TEXT,
-                status TEXT DEFAULT 'New',
-                contact_name TEXT DEFAULT '', contact_url TEXT DEFAULT '',
-                user_notes TEXT DEFAULT '',
-                created_at TEXT, updated_at TEXT,
                 UNIQUE(profile, company_number)
             )
         """)
+        # Auto-add any columns missing from an older DB (self-healing migration).
+        existing = {r["name"] for r in c.execute("PRAGMA table_info(leads)")}
+        for col, decl in _COLUMNS.items():
+            if col not in existing:
+                c.execute(f"ALTER TABLE leads ADD COLUMN {col} {decl}")
         c.execute("""
             CREATE TABLE IF NOT EXISTS progress (
                 profile TEXT PRIMARY KEY, next_skip INTEGER DEFAULT 0
@@ -81,7 +90,7 @@ def fetch_leads(profile: Optional[str] = None, status: Optional[str] = None,
         q += " AND status = ?"; params.append(status)
     if sector and sector != "All":
         q += " AND sector = ?"; params.append(sector)
-    q += " ORDER BY sector, ch_company_name"
+    q += " ORDER BY id"          # order of addition (newest at bottom); use "id DESC" for newest-first
     with _conn() as c:
         return [dict(r) for r in c.execute(q, params).fetchall()]
 
